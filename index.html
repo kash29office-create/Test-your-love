@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta property="og:title" content="A Valentine Card Just for You ❤️">
+<meta property="og:description" content="Tap to play a little love game 🌸">
+<meta property="og:type" content="website">
+
+<title>Valentine Card ❤️</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(#ffe6eb, #ffd1dc);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.screen {
+  width: 100%;
+  height: 100%;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.screen.active {
+  display: flex;
+}
+
+button {
+  background: #ff4d6d;
+  color: white;
+  border: none;
+  padding: 14px 30px;
+  font-size: 18px;
+  border-radius: 30px;
+  margin-top: 20px;
+}
+
+.flower {
+  position: relative;
+  width: 260px;
+  height: 260px;
+}
+
+.petal {
+  position: absolute;
+  width: 50px;
+  height: 90px;
+  background: pink;
+  border-radius: 50%;
+  top: 85px;
+  left: 105px;
+  transform-origin: bottom center;
+  cursor: pointer;
+}
+
+.petal.fall {
+  animation: fall 1.5s forwards ease-in;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(500px) rotate(120deg);
+    opacity: 0;
+  }
+}
+
+.center {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background: gold;
+  border-radius: 50%;
+  top: 100px;
+  left: 100px;
+}
+
+.popup {
+  position: fixed;
+  bottom: 30px;
+  background: white;
+  padding: 12px 22px;
+  border-radius: 20px;
+  display: none;
+  font-size: 18px;
+}
+
+/* hearts */
+.heart {
+  position: fixed;
+  top: -20px;
+  font-size: 22px;
+  animation: heartFall 3s linear forwards;
+}
+
+@keyframes heartFall {
+  to {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- INTRO SCREEN -->
+<div class="screen active" id="intro">
+  <h1>💌 Happy Valentine’s 💌</h1>
+  <p>I made something special for you</p>
+  <button onclick="startGame()">Tap to Open</button>
+</div>
+
+<!-- GAME SCREEN -->
+<div class="screen" id="game">
+  <p>🌸 Pick petals one by one 🌸</p>
+  <div class="flower" id="flower"></div>
+</div>
+
+<div class="popup" id="popup"></div>
+
+<script>
+const messages = [
+  "You love me",
+  "You love me not",
+  "You love me",
+  "You love me not",
+  "You love me",
+  "You love me not",
+  "You love me",
+  "You love me not",
+  "You love me",
+  "You love me not",
+  "You love me",
+  "You love me"
+];
+
+const flower = document.getElementById("flower");
+const popup = document.getElementById("popup");
+
+function startGame() {
+  document.getElementById("intro").classList.remove("active");
+  document.getElementById("game").classList.add("active");
+}
+
+messages.forEach((msg, i) => {
+  const petal = document.createElement("div");
+  petal.className = "petal";
+  petal.style.transform =
+    `rotate(${(360 / 12) * i}deg) translateY(-100px)`;
+
+  petal.onclick = () => {
+    if (petal.classList.contains("fall")) return;
+
+    petal.classList.add("fall");
+
+    popup.innerText = msg;
+    popup.style.display = "block";
+
+    // heart rain
+    for (let j = 0; j < 6; j++) {
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.innerText = "❤️";
+      h.style.left = Math.random() * 100 + "vw";
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 3000);
+    }
+
+    setTimeout(() => popup.style.display = "none", 1200);
+
+    // last petal logic
+    if (i === 11) {
+      setTimeout(() => {
+        if (msg === "You love me") {
+          showResult("🤗 FREE HUG PASS 🤗", "#ffd1dc");
+        } else {
+          showResult("😢💔", "#cfd8dc");
+        }
+      }, 1500);
+    }
+  };
+
+  flower.appendChild(petal);
+});
+
+flower.appendChild(
+  Object.assign(document.createElement("div"), { className: "center" })
+);
+
+function showResult(text, bg) {
+  document.body.innerHTML = `
+    <div style="
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-size:36px;
+      background:${bg};
+      animation:pulse 1s infinite alternate;">
+      ${text}
+    </div>
+  `;
+}
+
+</script>
+
+</body>
+</html>
