@@ -2,197 +2,219 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Test Your Love 🌺</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Test Your Love ❤️</title>
 
 <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
-
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: radial-gradient(circle, #1b3a1b, #0a1f0a);
-  overflow: hidden;
-  font-family: system-ui, sans-serif;
-}
-
-/* Flower container */
-.flower {
-  position: relative;
-  width: 320px;
-  height: 320px;
-}
-
-/* Rafflesia center */
-.center {
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  background: radial-gradient(circle, #3a1b12 20%, #140807 70%);
-  border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 20;
-}
-
-/* Petals */
-.petal {
-  position: absolute;
-  width: 190px;
-  height: 170px;
-  top: 50%;
-  left: 50%;
-  transform-origin: 50% 100%;
-  background: radial-gradient(circle at 30% 30%, #8b1d2c, #4b0d14);
-  border-radius: 60% 60% 70% 70%;
-  cursor: pointer;
-}
-
-/* White wart texture */
-.petal::before {
-  content: "";
-  position: absolute;
-  inset: 12px;
-  background-image:
-    radial-gradient(circle, rgba(255,255,255,0.9) 14%, transparent 15%);
-  background-size: 18px 18px;
-  border-radius: inherit;
-  opacity: 0.85;
-}
-
-/* Falling animation */
-.fall {
-  animation: fall 1.2s forwards ease-in;
-}
-
-@keyframes fall {
-  to {
-    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(500px) rotate(120deg);
-    opacity: 0;
+  * {
+    box-sizing: border-box;
+    font-family: 'Georgia', serif;
   }
-}
 
-/* Message popup */
-.popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(0,0,0,0.8);
-  color: white;
-  padding: 14px 22px;
-  border-radius: 12px;
-  font-size: 18px;
-  opacity: 0;
-  transition: opacity 0.3s;
-  z-index: 50;
-}
+  body {
+    margin: 0;
+    background: radial-gradient(circle at top, #1a0000, #000);
+    color: #fff;
+    height: 100vh;
+    overflow: hidden;
+  }
 
-@media (max-width: 480px) {
+  .container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 16px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin-bottom: 6px;
+  }
+
+  p {
+    opacity: 0.85;
+    margin-bottom: 20px;
+  }
+
+  /* FLOWER */
   .flower {
+    position: relative;
     width: 260px;
     height: 260px;
   }
-  .petal {
-    width: 150px;
-    height: 140px;
+
+  .center {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    background: radial-gradient(circle, #2a0000, #000);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    box-shadow: inset 0 0 20px #000;
   }
-}
+
+  .petal {
+    position: absolute;
+    width: 120px;
+    height: 70px;
+    background: linear-gradient(135deg, #5c0000, #2b0000);
+    border-radius: 60% 60% 50% 50%;
+    top: 50%;
+    left: 50%;
+    transform-origin: left center;
+    cursor: pointer;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.6);
+    transition: transform 0.6s ease, opacity 0.6s ease;
+  }
+
+  .petal.fall {
+    transform: translateY(180px) rotate(60deg);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* POPUP */
+  .popup {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .popup span {
+    background: rgba(0,0,0,0.7);
+    padding: 16px 26px;
+    border-radius: 30px;
+    font-size: 1.4rem;
+    animation: fade 1.2s ease;
+  }
+
+  @keyframes fade {
+    0% { opacity: 0; transform: scale(0.8); }
+    20% { opacity: 1; transform: scale(1); }
+    80% { opacity: 1; }
+    100% { opacity: 0; transform: scale(1.1); }
+  }
+
+  /* END SCREENS */
+  .end {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 20px;
+  }
+
+  .hug {
+    font-size: 5rem;
+    animation: hug 1.5s infinite alternate;
+  }
+
+  @keyframes hug {
+    from { transform: scale(1); }
+    to { transform: scale(1.1); }
+  }
+
+  .sad {
+    font-size: 4rem;
+    animation: sad 1.5s infinite alternate;
+  }
+
+  @keyframes sad {
+    from { transform: translateY(0); }
+    to { transform: translateY(10px); }
+  }
+
 </style>
 </head>
 
 <body>
 
-<div class="flower" id="flower"></div>
+<div class="container" id="game">
+  <h1>For Kuchupuchu ❤️</h1>
+  <p>From your Chuchu…<br>Pluck the petals slowly.</p>
+
+  <div class="flower" id="flower">
+    <div class="center"></div>
+  </div>
+</div>
+
 <div class="popup" id="popup"></div>
 
+<div class="container end" id="hugPage">
+  <div class="hug">🤗</div>
+  <h1>Free Hug Pass</h1>
+  <p>Valid forever.<br>Issued by Chuchu 💌</p>
+</div>
+
+<div class="container end" id="sadPage">
+  <div class="sad">😔</div>
+  <h1>Oh no…</h1>
+  <p>Chuchu still loves you though ❤️</p>
+</div>
+
 <script>
-const flower = document.getElementById("flower");
-const popup = document.getElementById("popup");
+  const flower = document.getElementById('flower');
+  const popup = document.getElementById('popup');
+  const game = document.getElementById('game');
+  const hugPage = document.getElementById('hugPage');
+  const sadPage = document.getElementById('sadPage');
 
-const PETAL_COUNT = 5;
-const RADIUS = 55;
-let order = [];
-let index = 0;
+  const totalPetals = 12;
+  let messages = [];
 
-// Decide ending once
-const finalLove = Math.random() > 0.5;
-
-// Prepare message order
-for (let i = 0; i < PETAL_COUNT - 1; i++) {
-  order.push(Math.random() > 0.5);
-}
-order.push(finalLove);
-
-// Create petals (geometry-first, no randomness)
-for (let i = 0; i < PETAL_COUNT; i++) {
-  const petal = document.createElement("div");
-  petal.className = "petal";
-
-  const angle = (360 / PETAL_COUNT) * i;
-  petal.style.setProperty("--angle", angle + "deg");
-
-  petal.style.transform =
-    `translate(-50%, -50%) rotate(${angle}deg) translateY(-${RADIUS}px)`;
-
-  petal.style.zIndex = 10 + i;
-
-  petal.addEventListener("click", () => onPetalClick(petal));
-
-  flower.appendChild(petal);
-}
-
-// Add center last (true center)
-const center = document.createElement("div");
-center.className = "center";
-flower.appendChild(center);
-
-function onPetalClick(petal) {
-  if (petal.classList.contains("fall")) return;
-
-  const love = order[index];
-  index++;
-
-  popup.textContent = love ? "You love me ❤️" : "You love me not 💔";
-  popup.style.opacity = 1;
-  setTimeout(() => popup.style.opacity = 0, 900);
-
-  petal.classList.add("fall");
-
-  if (index === PETAL_COUNT) {
-    setTimeout(() => {
-      document.body.innerHTML = love ? success() : sad();
-    }, 1400);
+  for (let i = 0; i < totalPetals - 1; i++) {
+    messages.push(Math.random() > 0.5 ? "You love me ❤️" : "You love me not 💔");
   }
-}
 
-function success() {
-  return `
-    <div style="height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;background:#ffebee;text-align:center;">
-      <h1 style="color:#b71c1c;">Free Hug Pass 🤗</h1>
-      <p>Kuchupuchu loves you always ❤️</p>
-      <div style="font-size:80px;">🤗</div>
-    </div>
-  `;
-}
+  const finalMessage = Math.random() > 0.5 ? "You love me ❤️" : "You love me not 💔";
+  messages.push(finalMessage);
 
-function sad() {
-  return `
-    <div style="height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;background:#111;color:white;text-align:center;">
-      <h1>Oh no 😢</h1>
-      <p>Sed Chuchu…</p>
-      <div style="font-size:80px;">🥀</div>
-    </div>
-  `;
-}
+  messages = messages.sort(() => Math.random() - 0.5);
+
+  let remaining = totalPetals;
+
+  for (let i = 0; i < totalPetals; i++) {
+    const petal = document.createElement('div');
+    petal.className = 'petal';
+
+    const angle = (360 / totalPetals) * i;
+    petal.style.transform = `rotate(${angle}deg) translateX(60px)`;
+
+    petal.addEventListener('click', () => {
+      if (petal.classList.contains('fall')) return;
+
+      petal.classList.add('fall');
+      showPopup(messages.pop());
+      remaining--;
+
+      if (remaining === 0) {
+        setTimeout(() => {
+          game.style.display = 'none';
+          finalMessage.includes('love me')
+            ? hugPage.style.display = 'flex'
+            : sadPage.style.display = 'flex';
+        }, 1200);
+      }
+    });
+
+    flower.appendChild(petal);
+  }
+
+  function showPopup(text) {
+    popup.innerHTML = `<span>${text}</span>`;
+    setTimeout(() => popup.innerHTML = '', 1200);
+  }
 </script>
 
 </body>
 </html>
-
