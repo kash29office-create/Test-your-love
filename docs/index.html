@@ -2,102 +2,106 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Test Your Love 🌸</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Test Your Love 🌺</title>
 
 <style>
-* {
-  box-sizing: border-box;
+html, body {
   margin: 0;
   padding: 0;
+  height: 100%;
 }
 
 body {
-  height: 100vh;
-  background: radial-gradient(circle, #2e7d32, #0b3d0b);
   display: flex;
   justify-content: center;
   align-items: center;
+  background: radial-gradient(circle, #1b3a1b, #0a1f0a);
   overflow: hidden;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: system-ui, sans-serif;
 }
 
-.container {
+/* Flower container */
+.flower {
   position: relative;
   width: 320px;
   height: 320px;
 }
 
+/* Rafflesia center */
 .center {
   position: absolute;
-  width: 110px;
-  height: 110px;
-  background: radial-gradient(circle, #5b2a1d, #2a120b);
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, #3a1b12 20%, #140807 70%);
   border-radius: 50%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 5;
-}
-
-.message {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(0,0,0,0.75);
-  color: #fff;
-  padding: 14px 22px;
-  border-radius: 12px;
-  font-size: 18px;
-  opacity: 0;
   z-index: 20;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
 }
 
+/* Petals */
 .petal {
   position: absolute;
-  width: 120px;
-  height: 145px;
-  background: radial-gradient(circle at 30% 30%, #ffb3c6, #c2185b);
-  border-radius: 55% 55% 60% 60%;
+  width: 190px;
+  height: 170px;
   top: 50%;
   left: 50%;
-  transform-origin: center bottom;
-  transition: transform 0.4s ease;
+  transform-origin: 50% 100%;
+  background: radial-gradient(circle at 30% 30%, #8b1d2c, #4b0d14);
+  border-radius: 60% 60% 70% 70%;
   cursor: pointer;
 }
 
+/* White wart texture */
 .petal::before {
   content: "";
   position: absolute;
-  inset: 8px;
-  background-image: radial-gradient(#ffd6e5 18%, transparent 19%);
-  background-size: 14px 14px;
+  inset: 12px;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.9) 14%, transparent 15%);
+  background-size: 18px 18px;
   border-radius: inherit;
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
+/* Falling animation */
 .fall {
   animation: fall 1.2s forwards ease-in;
 }
 
 @keyframes fall {
   to {
-    transform: translateY(500px) rotate(120deg);
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(500px) rotate(120deg);
     opacity: 0;
   }
 }
 
+/* Message popup */
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.8);
+  color: white;
+  padding: 14px 22px;
+  border-radius: 12px;
+  font-size: 18px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 50;
+}
+
 @media (max-width: 480px) {
-  .container {
+  .flower {
     width: 260px;
     height: 260px;
   }
   .petal {
-    width: 100px;
-    height: 120px;
+    width: 150px;
+    height: 140px;
   }
 }
 </style>
@@ -105,116 +109,85 @@ body {
 
 <body>
 
-<div class="container" id="flower"></div>
-<div class="message" id="popup"></div>
+<div class="flower" id="flower"></div>
+<div class="popup" id="popup"></div>
 
 <script>
 const flower = document.getElementById("flower");
 const popup = document.getElementById("popup");
 
-const petalCount = 5;
-let petals = [];
-let messages = [];
-let clicks = 0;
+const PETAL_COUNT = 5;
+const RADIUS = 55;
+let order = [];
+let index = 0;
 
-// Randomly decide ending
+// Decide ending once
 const finalLove = Math.random() > 0.5;
 
-// Create message order
-for (let i = 0; i < petalCount - 1; i++) {
-  messages.push(Math.random() > 0.5 ? "You love me 💖" : "You love me not 💔");
+// Prepare message order
+for (let i = 0; i < PETAL_COUNT - 1; i++) {
+  order.push(Math.random() > 0.5);
 }
-messages.push(finalLove ? "You love me 💖" : "You love me not 💔");
+order.push(finalLove);
 
-// Create petals
-for (let i = 0; i < petalCount; i++) {
+// Create petals (geometry-first, no randomness)
+for (let i = 0; i < PETAL_COUNT; i++) {
   const petal = document.createElement("div");
   petal.className = "petal";
 
-  const angle = (360 / petalCount) * i;
-  const radius = 75;
+  const angle = (360 / PETAL_COUNT) * i;
+  petal.style.setProperty("--angle", angle + "deg");
 
-  const x = Math.cos(angle * Math.PI / 180) * radius;
-  const y = Math.sin(angle * Math.PI / 180) * radius;
+  petal.style.transform =
+    `translate(-50%, -50%) rotate(${angle}deg) translateY(-${RADIUS}px)`;
 
-  petal.style.transform = `
-    translate(-50%, -50%)
-    translate(${x}px, ${y}px)
-    rotate(${angle}deg)
-  `;
+  petal.style.zIndex = 10 + i;
 
-  petal.style.zIndex = 10 - i;
+  petal.addEventListener("click", () => onPetalClick(petal));
 
-  petal.addEventListener("click", () => handleClick(petal));
-
-  petals.push(petal);
   flower.appendChild(petal);
 }
 
-// Add center last
+// Add center last (true center)
 const center = document.createElement("div");
 center.className = "center";
 flower.appendChild(center);
 
-function handleClick(petal) {
+function onPetalClick(petal) {
   if (petal.classList.contains("fall")) return;
 
-  const msg = messages[clicks];
-  clicks++;
+  const love = order[index];
+  index++;
 
-  popup.innerText = msg;
+  popup.textContent = love ? "You love me ❤️" : "You love me not 💔";
   popup.style.opacity = 1;
-
   setTimeout(() => popup.style.opacity = 0, 900);
 
   petal.classList.add("fall");
 
-  if (clicks === petalCount) {
+  if (index === PETAL_COUNT) {
     setTimeout(() => {
-      document.body.innerHTML = finalLove
-        ? successPage()
-        : sadPage();
+      document.body.innerHTML = love ? success() : sad();
     }, 1400);
   }
 }
 
-function successPage() {
+function success() {
   return `
-    <div style="
-      height:100vh;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      background:#ffebee;
-      text-align:center;
-      font-family:Segoe UI;">
-      <h1 style="font-size:32px;color:#c2185b;">Free Hug Pass 🤗</h1>
-      <p style="font-size:20px;margin-top:10px;">
-        Kuchupuchu loves you forever 💖
-      </p>
-      <div style="font-size:80px;margin-top:20px;">🤗</div>
+    <div style="height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;background:#ffebee;text-align:center;">
+      <h1 style="color:#b71c1c;">Free Hug Pass 🤗</h1>
+      <p>Kuchupuchu loves you always ❤️</p>
+      <div style="font-size:80px;">🤗</div>
     </div>
   `;
 }
 
-function sadPage() {
+function sad() {
   return `
-    <div style="
-      height:100vh;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      background:#263238;
-      color:white;
-      text-align:center;
-      font-family:Segoe UI;">
-      <h1 style="font-size:30px;">Oh no 😢</h1>
-      <p style="font-size:18px;margin-top:10px;">
-        Kuchupuchu is shy today…
-      </p>
-      <div style="font-size:80px;margin-top:20px;">🥀</div>
+    <div style="height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;background:#111;color:white;text-align:center;">
+      <h1>Oh no 😢</h1>
+      <p>Sed Chuchu…</p>
+      <div style="font-size:80px;">🥀</div>
     </div>
   `;
 }
@@ -222,3 +195,4 @@ function sadPage() {
 
 </body>
 </html>
+
