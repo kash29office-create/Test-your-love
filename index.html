@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <meta property="og:title" content="Test Your Love ❤️">
-<meta property="og:description" content="Pick petals and see what fate says 🌸">
-<meta property="og:type" content="website">
+<meta property="og:description" content="Kuchupuchu, pluck the petals and see destiny 🌺">
 
 <title>Test Your Love ❤️</title>
 
@@ -14,7 +13,7 @@
 body {
   margin: 0;
   height: 100vh;
-  background: radial-gradient(circle, #ffdde4, #f6a5b1);
+  background: radial-gradient(circle, #ffd6dc, #f2a2b3);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -22,98 +21,103 @@ body {
   overflow: hidden;
 }
 
+/* Screens */
 .screen {
   display: none;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  padding: 20px;
 }
-
-.screen.active {
-  display: flex;
-}
+.screen.active { display: flex; }
 
 button {
+  background: #7b0000;
+  color: white;
+  border: none;
   padding: 14px 30px;
   border-radius: 30px;
-  border: none;
-  background: #8b0000;
-  color: white;
   font-size: 18px;
+  margin-top: 20px;
 }
 
 /* 🌺 Flower */
 .flower {
   position: relative;
-  width: 320px;
-  height: 320px;
+  width: min(85vw, 300px);
+  height: min(85vw, 300px);
+  animation: breathe 3.5s ease-in-out infinite;
 }
 
-/* 🌺 Rafflesia-style petals */
+@keyframes breathe {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+/* 🌺 Petals */
 .petal {
   position: absolute;
-  width: 120px;
-  height: 160px;
+  width: 58%;
+  height: 72%;
+  left: 21%;
+  top: 14%;
   background:
     radial-gradient(circle at 30% 30%, #ffdede 6%, transparent 7%),
-    radial-gradient(circle at 60% 50%, #ffdede 6%, transparent 7%),
-    radial-gradient(circle at 40% 70%, #ffdede 6%, transparent 7%),
-    linear-gradient(#8b0000, #5a0000);
-  border-radius: 60% 60% 80% 80%;
+    radial-gradient(circle at 60% 45%, #ffdede 6%, transparent 7%),
+    radial-gradient(circle at 45% 70%, #ffdede 6%, transparent 7%),
+    linear-gradient(#a30000, #5c0000);
+  border-radius: 70% 70% 90% 90%;
   transform-origin: bottom center;
   cursor: pointer;
+  box-shadow: 0 12px 18px rgba(0,0,0,0.25);
 }
 
-/* falling animation */
 .petal.fall {
   animation: fall 1.6s forwards ease-in;
 }
 
 @keyframes fall {
   to {
-    transform: translateY(500px) rotate(120deg);
+    transform: translateY(120vh) rotate(140deg);
     opacity: 0;
   }
 }
 
-/* flower center */
+/* Center cavity */
 .center {
   position: absolute;
-  width: 110px;
-  height: 110px;
-  background: radial-gradient(circle, #3b0000, #1a0000);
+  width: 34%;
+  height: 34%;
+  left: 33%;
+  top: 33%;
+  background: radial-gradient(circle, #2a0000, #000);
   border-radius: 50%;
-  top: 105px;
-  left: 105px;
+  box-shadow: inset 0 0 18px rgba(0,0,0,0.6);
 }
 
-/* center popup text */
+/* Popup text */
 .popup {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(255,255,255,0.95);
-  padding: 20px 30px;
+  background: rgba(255,255,255,0.97);
+  padding: 18px 28px;
   border-radius: 25px;
-  font-size: 22px;
+  font-size: 20px;
   display: none;
-  z-index: 100;
+  z-index: 10;
 }
 
-/* hearts */
+/* Hearts */
 .heart {
   position: fixed;
   top: -20px;
-  font-size: 24px;
+  font-size: 22px;
   animation: heartFall 3s linear forwards;
 }
-
 @keyframes heartFall {
-  to {
-    transform: translateY(100vh);
-    opacity: 0;
-  }
+  to { transform: translateY(100vh); opacity: 0; }
 }
 </style>
 </head>
@@ -122,13 +126,14 @@ button {
 
 <!-- INTRO -->
 <div class="screen active" id="intro">
-  <h1>❤️ Test Your Love ❤️</h1>
-  <p>Pick petals one by one</p>
+  <h1>❤️ Hi Kuchupuchu ❤️</h1>
+  <p>I made this little love test for you 🌸</p>
   <button onclick="start()">Start</button>
 </div>
 
 <!-- GAME -->
 <div class="screen" id="game">
+  <p>Pluck the petals one by one</p>
   <div class="flower" id="flower"></div>
 </div>
 
@@ -140,17 +145,10 @@ const messages = [
   "You love me not",
   "You love me",
   "You love me not",
-  "You love me",
-  "You love me not",
-  "You love me",
-  "You love me not",
-  "You love me",
-  "You love me not",
-  "You love me",
   "You love me"
 ];
 
-let remaining = [];
+let remaining = [...messages];
 const flower = document.getElementById("flower");
 const popup = document.getElementById("popup");
 
@@ -159,27 +157,22 @@ function start() {
   document.getElementById("game").classList.add("active");
 }
 
-messages.forEach((msg, i) => {
-  remaining.push(msg);
-
+messages.forEach((_, i) => {
   const petal = document.createElement("div");
   petal.className = "petal";
-  const angle = (360 / 12) * i;
-  petal.style.transform = `rotate(${angle}deg) translateY(-120px)`;
+  petal.style.transform = `rotate(${(360 / 5) * i}deg) translateY(-40%)`;
 
   petal.onclick = () => {
     if (petal.classList.contains("fall")) return;
 
-    // pick random message
     const index = Math.floor(Math.random() * remaining.length);
     const result = remaining.splice(index, 1)[0];
 
     popup.innerText = result;
     popup.style.display = "block";
-
     petal.classList.add("fall");
 
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 5; i++) {
       const h = document.createElement("div");
       h.className = "heart";
       h.innerText = "❤️";
@@ -190,30 +183,36 @@ messages.forEach((msg, i) => {
 
     setTimeout(() => popup.style.display = "none", 1200);
 
-    // LAST PETAL FALLS
     if (remaining.length === 0) {
-      setTimeout(() => {
-        showResult(result);
-      }, 1600);
+      setTimeout(() => showResult(result), 1600);
     }
   };
 
   flower.appendChild(petal);
 });
 
-flower.appendChild(Object.assign(document.createElement("div"), { className: "center" }));
+flower.appendChild(
+  Object.assign(document.createElement("div"), { className: "center" })
+);
 
 function showResult(result) {
   document.body.innerHTML = `
     <div style="
       height:100vh;
       display:flex;
+      flex-direction:column;
       justify-content:center;
       align-items:center;
-      font-size:36px;
+      font-size:30px;
       background:${result === "You love me" ? "#ffd1dc" : "#cfd8dc"};
-      animation:pulse 1s infinite alternate;">
-      ${result === "You love me" ? "🤗 FREE HUG PASS 🤗" : "😢💔"}
+      text-align:center;
+      padding:20px;">
+      <div>
+        ${result === "You love me"
+          ? "🤗 FREE HUG PASS FOR KUCHUPUCHU 🤗"
+          : "😢 Maybe next time, Kuchupuchu 💔"}
+      </div>
+      <button onclick="location.reload()">Replay</button>
     </div>
   `;
 }
