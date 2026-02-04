@@ -1,36 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta property="og:title" content="A Valentine Card Just for You ❤️">
-<meta property="og:description" content="Tap to play a little love game 🌸">
+<meta property="og:title" content="Test Your Love ❤️">
+<meta property="og:description" content="Pick petals and see what fate says 🌸">
 <meta property="og:type" content="website">
 
-<title>Valentine Card ❤️</title>
+<title>Test Your Love ❤️</title>
 
 <style>
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(#ffe6eb, #ffd1dc);
   height: 100vh;
-  overflow: hidden;
+  background: radial-gradient(circle, #ffdde4, #f6a5b1);
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: Georgia, serif;
+  overflow: hidden;
 }
 
 .screen {
-  width: 100%;
-  height: 100%;
   display: none;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 20px;
 }
 
 .screen.active {
@@ -38,35 +34,39 @@ body {
 }
 
 button {
-  background: #ff4d6d;
-  color: white;
-  border: none;
   padding: 14px 30px;
-  font-size: 18px;
   border-radius: 30px;
-  margin-top: 20px;
+  border: none;
+  background: #8b0000;
+  color: white;
+  font-size: 18px;
 }
 
+/* 🌺 Flower */
 .flower {
   position: relative;
-  width: 260px;
-  height: 260px;
+  width: 320px;
+  height: 320px;
 }
 
+/* 🌺 Rafflesia-style petals */
 .petal {
   position: absolute;
-  width: 50px;
-  height: 90px;
-  background: pink;
-  border-radius: 50%;
-  top: 85px;
-  left: 105px;
+  width: 120px;
+  height: 160px;
+  background:
+    radial-gradient(circle at 30% 30%, #ffdede 6%, transparent 7%),
+    radial-gradient(circle at 60% 50%, #ffdede 6%, transparent 7%),
+    radial-gradient(circle at 40% 70%, #ffdede 6%, transparent 7%),
+    linear-gradient(#8b0000, #5a0000);
+  border-radius: 60% 60% 80% 80%;
   transform-origin: bottom center;
   cursor: pointer;
 }
 
+/* falling animation */
 .petal.fall {
-  animation: fall 1.5s forwards ease-in;
+  animation: fall 1.6s forwards ease-in;
 }
 
 @keyframes fall {
@@ -76,31 +76,36 @@ button {
   }
 }
 
+/* flower center */
 .center {
   position: absolute;
-  width: 60px;
-  height: 60px;
-  background: gold;
+  width: 110px;
+  height: 110px;
+  background: radial-gradient(circle, #3b0000, #1a0000);
   border-radius: 50%;
-  top: 100px;
-  left: 100px;
+  top: 105px;
+  left: 105px;
 }
 
+/* center popup text */
 .popup {
   position: fixed;
-  bottom: 30px;
-  background: white;
-  padding: 12px 22px;
-  border-radius: 20px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255,255,255,0.95);
+  padding: 20px 30px;
+  border-radius: 25px;
+  font-size: 22px;
   display: none;
-  font-size: 18px;
+  z-index: 100;
 }
 
 /* hearts */
 .heart {
   position: fixed;
   top: -20px;
-  font-size: 22px;
+  font-size: 24px;
   animation: heartFall 3s linear forwards;
 }
 
@@ -115,16 +120,15 @@ button {
 
 <body>
 
-<!-- INTRO SCREEN -->
+<!-- INTRO -->
 <div class="screen active" id="intro">
-  <h1>💌 Happy Valentine’s 💌</h1>
-  <p>I made something special for you</p>
-  <button onclick="startGame()">Tap to Open</button>
+  <h1>❤️ Test Your Love ❤️</h1>
+  <p>Pick petals one by one</p>
+  <button onclick="start()">Start</button>
 </div>
 
-<!-- GAME SCREEN -->
+<!-- GAME -->
 <div class="screen" id="game">
-  <p>🌸 Pick petals one by one 🌸</p>
   <div class="flower" id="flower"></div>
 </div>
 
@@ -146,30 +150,36 @@ const messages = [
   "You love me"
 ];
 
+let remaining = [];
 const flower = document.getElementById("flower");
 const popup = document.getElementById("popup");
 
-function startGame() {
+function start() {
   document.getElementById("intro").classList.remove("active");
   document.getElementById("game").classList.add("active");
 }
 
 messages.forEach((msg, i) => {
+  remaining.push(msg);
+
   const petal = document.createElement("div");
   petal.className = "petal";
-  petal.style.transform =
-    `rotate(${(360 / 12) * i}deg) translateY(-100px)`;
+  const angle = (360 / 12) * i;
+  petal.style.transform = `rotate(${angle}deg) translateY(-120px)`;
 
   petal.onclick = () => {
     if (petal.classList.contains("fall")) return;
 
-    petal.classList.add("fall");
+    // pick random message
+    const index = Math.floor(Math.random() * remaining.length);
+    const result = remaining.splice(index, 1)[0];
 
-    popup.innerText = msg;
+    popup.innerText = result;
     popup.style.display = "block";
 
-    // heart rain
-    for (let j = 0; j < 6; j++) {
+    petal.classList.add("fall");
+
+    for (let i = 0; i < 6; i++) {
       const h = document.createElement("div");
       h.className = "heart";
       h.innerText = "❤️";
@@ -180,26 +190,20 @@ messages.forEach((msg, i) => {
 
     setTimeout(() => popup.style.display = "none", 1200);
 
-    // last petal logic
-    if (i === 11) {
+    // LAST PETAL FALLS
+    if (remaining.length === 0) {
       setTimeout(() => {
-        if (msg === "You love me") {
-          showResult("🤗 FREE HUG PASS 🤗", "#ffd1dc");
-        } else {
-          showResult("😢💔", "#cfd8dc");
-        }
-      }, 1500);
+        showResult(result);
+      }, 1600);
     }
   };
 
   flower.appendChild(petal);
 });
 
-flower.appendChild(
-  Object.assign(document.createElement("div"), { className: "center" })
-);
+flower.appendChild(Object.assign(document.createElement("div"), { className: "center" }));
 
-function showResult(text, bg) {
+function showResult(result) {
   document.body.innerHTML = `
     <div style="
       height:100vh;
@@ -207,13 +211,12 @@ function showResult(text, bg) {
       justify-content:center;
       align-items:center;
       font-size:36px;
-      background:${bg};
+      background:${result === "You love me" ? "#ffd1dc" : "#cfd8dc"};
       animation:pulse 1s infinite alternate;">
-      ${text}
+      ${result === "You love me" ? "🤗 FREE HUG PASS 🤗" : "😢💔"}
     </div>
   `;
 }
-
 </script>
 
 </body>
